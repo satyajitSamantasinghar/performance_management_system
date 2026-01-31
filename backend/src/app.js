@@ -2,7 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require("./routes/authRoutes");
 const app = express();
-
+const employeeRoutes = require("./routes/employeeRoutes");
+const raRoutes = require("./routes/raRoutes");
+const hrdRoutes = require("./routes/hrdRoutes");
+const mdRoutes = require("./routes/mdRoutes");
 app.use(cors());
 app.use(express.json());
 
@@ -17,6 +20,9 @@ app.get("/test-db", (req, res) => {
     res.json({ message: "MongoDB connected and API working" });
 });
 app.use("/api/auth", authRoutes);
-
+app.use("/api/employee", employeeRoutes);
+app.use("/api/ra", raRoutes);
+app.use("/api/hrd", hrdRoutes);
+app.use("/api/md", mdRoutes);
 
 module.exports = app;
