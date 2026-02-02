@@ -98,3 +98,17 @@ exports.refreshAccessToken = async (req, res) => {
     res.status(403).json({ message: "Invalid refresh token" });
   }
 };
+
+exports.logout = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    await User.findByIdAndUpdate(userId, {
+      refreshToken: null
+    });
+
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Logout failed" });
+  }
+};

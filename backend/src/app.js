@@ -6,7 +6,26 @@ const employeeRoutes = require("./routes/employeeRoutes");
 const raRoutes = require("./routes/raRoutes");
 const hrdRoutes = require("./routes/hrdRoutes");
 const mdRoutes = require("./routes/mdRoutes");
-app.use(cors());
+app.use(cors(
+    {
+        origin:[
+          "https://64wjr92x-5000.inc1.devtunnels.ms/ ",
+          "http://localhost:5173"
+
+        ]
+    }
+));
+
+// app.use(cors({
+//   origin: true,        // allow ALL origins (needed for devtunnels)
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"]
+// }));
+
+
+
+
 app.use(express.json());
 
 
