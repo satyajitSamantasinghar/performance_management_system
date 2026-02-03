@@ -8,34 +8,60 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [email, setEmail] = useState(""); 
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+    e.preventDefault();
+    if (loading) return;
 
-  try {
-    // const res = await api.post("/auth/login", {
-    //   email,
-    //   password,
-    // });
+    setError("");
+    setLoading(true);
 
-    // const { accessToken, role, name } = res.data;
+    try {
+      const res = await api.post("/auth/login", {
+        email,
+        password,
+      });
 
-    // login(accessToken, { name, role });
+      const { accessToken, role, name } = res.data;
 
-    navigate("/ra/dashboard");
-  } catch (err) {
-    console.error(err);
-    setError(err.response?.data?.message || "Login failed");
-  } finally {
-    setLoading(false);
-  }
-};
+      if (!accessToken || !role) {
+        throw new Error("Invalid login response");
+      }
+
+      login(accessToken, { name, role });
+
+      switch (role) {
+        case "EMPLOYEE":
+          navigate("/employee/dashboard");
+          break;
+        case "RA":
+          navigate("/ra/dashboard");
+          break;
+        case "HRD":
+          navigate("/hrd/dashboard");
+          break;
+        case "MD":
+          navigate("/md/dashboard");
+          break;
+        default:
+          setError("Unauthorized role");
+          navigate("/login");
+      }
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative min-h-screen bg-[#fffaf5] flex items-center justify-center overflow-hidden px-4">
