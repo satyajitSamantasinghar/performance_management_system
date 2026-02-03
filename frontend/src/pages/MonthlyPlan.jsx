@@ -51,10 +51,10 @@ const MonthlyPlan = () => {
       .join("\n");
 
     try {
-      await api.post("/employee/monthly-plan", {
-        month: currentMonth,
-        planDetails,
-      });
+      // await api.post("/employee/monthly-plan", {
+      //   month: currentMonth,
+      //   planDetails,
+      // });
 
       navigate("/employee/dashboard");
     } catch (err) {

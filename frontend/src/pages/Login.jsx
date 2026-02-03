@@ -19,16 +19,16 @@ const Login = () => {
   setLoading(true);
 
   try {
-    const res = await api.post("/auth/login", {
-      email,
-      password,
-    });
+    // const res = await api.post("/auth/login", {
+    //   email,
+    //   password,
+    // });
 
-    const { accessToken, role, name } = res.data;
+    // const { accessToken, role, name } = res.data;
 
-    login(accessToken, { name, role });
+    // login(accessToken, { name, role });
 
-    navigate("/employee/dashboard");
+    navigate("/ra/dashboard");
   } catch (err) {
     console.error(err);
     setError(err.response?.data?.message || "Login failed");
