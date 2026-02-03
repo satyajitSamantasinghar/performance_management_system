@@ -1,36 +1,17 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import logo from "../assets/okcl-logo.png";
-import { getMonthlyPhase } from "../utils/getMonthlyPhase";
 
-const Sidebar = () => {
-  const navigate = useNavigate();
-
+const SidebarHRD = () => {
   const base =
     "block px-5 py-3 rounded-md text-sm font-medium transition cursor-pointer";
 
+  // 🟡 Mustard theme
   const active =
-    "bg-orange-50 text-orange-600";
+    "bg-yellow-50 text-yellow-700";
 
   const inactive =
     "text-gray-600 hover:bg-gray-50";
-
-  const handleMonthlyReportClick = () => {
-    const phase = getMonthlyPhase();
-    navigate("/employee/monthly-plan")
-
-    // if (phase === "PLAN") {
-    //   navigate("/employee/monthly-plan");
-    //   return;
-    // }
-
-    // if (phase === "ACHIEVEMENT") {
-    //   navigate("/employee/monthly-achievement");
-    //   return;
-    // }
-
-    // alert("Monthly report is locked right now.");
-  };
 
   return (
     <div className="w-64 min-h-screen bg-white flex flex-col">
@@ -42,7 +23,7 @@ const Sidebar = () => {
       {/* Navigation */}
       <nav className="flex-1 px-3 py-5 space-y-1">
         <NavLink
-          to="/employee/dashboard"
+          to="/hrd/dashboard"
           className={({ isActive }) =>
             `${base} ${isActive ? active : inactive}`
           }
@@ -50,25 +31,26 @@ const Sidebar = () => {
           Dashboard
         </NavLink>
 
-        {/* Monthly Report (CUSTOM LOGIC) */}
-        <div
-          onClick={handleMonthlyReportClick}
-          className={`${base} ${inactive}`}
-        >
-          Monthly Report
-        </div>
-
         <NavLink
-          to="/employee/quarterly"
+          to="/hrd/monthly-plans"
           className={({ isActive }) =>
             `${base} ${isActive ? active : inactive}`
           }
         >
-          Quarterly Report
+          Monthly Plans
         </NavLink>
 
         <NavLink
-          to="/employee/yearly"
+          to="/hrd/yearly-plans"
+          className={({ isActive }) =>
+            `${base} ${isActive ? active : inactive}`
+          }
+        >
+          Yearly Plans
+        </NavLink>
+
+        <NavLink
+          to="/hrd/yearly-appraisal"
           className={({ isActive }) =>
             `${base} ${isActive ? active : inactive}`
           }
@@ -80,4 +62,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default SidebarHRD;

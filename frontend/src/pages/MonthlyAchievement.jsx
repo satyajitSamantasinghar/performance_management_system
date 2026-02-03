@@ -15,7 +15,6 @@ const MonthlyAchievement = () => {
 
   useEffect(() => {
     const fetchPlan = async () => {
-      //
       try {
         const res = await api.get("/employee/monthly-plan", {
           employeeId: user?.id, 

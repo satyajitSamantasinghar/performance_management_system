@@ -6,6 +6,9 @@ import EmployeeDashboard from "./pages/EmployeeDashboard";
 import MonthlyPlan from "./pages/MonthlyPlan"; 
 import MonthlyAchievement from "./pages/MonthlyAchievement";
 import MonthlyReport from "./pages/MonthlyReport";
+import RADashboard from "./pages/RADashboard";
+import HRDDashboard from "./pages/HRDDashboard";
+
 function App() {
   return (
     <BrowserRouter>
@@ -22,6 +25,13 @@ function App() {
         <Route path="/employee/monthly-plan" element={<MonthlyPlan />} /> 
         <Route path="/employee/monthly-achievement" element={<MonthlyAchievement />} />
         <Route path="/employee/monthly-report" element={<MonthlyReport />} />
+
+        {/* RA routes */}
+        <Route path="/ra/dashboard" element={<RADashboard />} />
+
+        {/* HRD routes */}
+        <Route path="/hrd/dashboard" element={<HRDDashboard />} />
+
       </Routes>
     </BrowserRouter>
   );

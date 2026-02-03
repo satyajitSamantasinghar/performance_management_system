@@ -1,36 +1,19 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/okcl-logo.png";
-import { getMonthlyPhase } from "../utils/getMonthlyPhase";
 
-const Sidebar = () => {
+const SidebarRA = () => {
   const navigate = useNavigate();
 
   const base =
     "block px-5 py-3 rounded-md text-sm font-medium transition cursor-pointer";
 
+  // 🔁 ONLY COLOR CHANGE
   const active =
-    "bg-orange-50 text-orange-600";
+    "bg-green-50 text-green-600";
 
   const inactive =
     "text-gray-600 hover:bg-gray-50";
-
-  const handleMonthlyReportClick = () => {
-    const phase = getMonthlyPhase();
-    navigate("/employee/monthly-plan")
-
-    // if (phase === "PLAN") {
-    //   navigate("/employee/monthly-plan");
-    //   return;
-    // }
-
-    // if (phase === "ACHIEVEMENT") {
-    //   navigate("/employee/monthly-achievement");
-    //   return;
-    // }
-
-    // alert("Monthly report is locked right now.");
-  };
 
   return (
     <div className="w-64 min-h-screen bg-white flex flex-col">
@@ -42,7 +25,7 @@ const Sidebar = () => {
       {/* Navigation */}
       <nav className="flex-1 px-3 py-5 space-y-1">
         <NavLink
-          to="/employee/dashboard"
+          to="/ra/dashboard"
           className={({ isActive }) =>
             `${base} ${isActive ? active : inactive}`
           }
@@ -50,25 +33,26 @@ const Sidebar = () => {
           Dashboard
         </NavLink>
 
-        {/* Monthly Report (CUSTOM LOGIC) */}
-        <div
-          onClick={handleMonthlyReportClick}
-          className={`${base} ${inactive}`}
-        >
-          Monthly Report
-        </div>
-
         <NavLink
-          to="/employee/quarterly"
+          to="/ra/monthly-review"
           className={({ isActive }) =>
             `${base} ${isActive ? active : inactive}`
           }
         >
-          Quarterly Report
+          Monthly Evaluation
         </NavLink>
 
         <NavLink
-          to="/employee/yearly"
+          to="/ra/quarterly-review"
+          className={({ isActive }) =>
+            `${base} ${isActive ? active : inactive}`
+          }
+        >
+          Quarterly Evaluation
+        </NavLink>
+
+        <NavLink
+          to="/ra/yearly-review"
           className={({ isActive }) =>
             `${base} ${isActive ? active : inactive}`
           }
@@ -80,4 +64,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default SidebarRA;
