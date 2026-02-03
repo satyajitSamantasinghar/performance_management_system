@@ -2,35 +2,87 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
 import EmployeeDashboard from "./pages/EmployeeDashboard";
-import MonthlyPlan from "./pages/MonthlyPlan"; 
+import MonthlyPlan from "./pages/MonthlyPlan";
 import MonthlyAchievement from "./pages/MonthlyAchievement";
-import MonthlyReport from "./pages/MonthlyReport";
+
 import RADashboard from "./pages/RADashboard";
 import HRDDashboard from "./pages/HRDDashboard";
+import MDDashboard from "./pages/MDDashboard";
+
+import ProtectedRoute from "./routes/ProtectedRoute";
+import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Default route */}
+        {/* Default */}
         <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Auth routes */}
+        {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Employee routes */}
-        <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
-        <Route path="/employee/monthly-plan" element={<MonthlyPlan />} /> 
-        <Route path="/employee/monthly-achievement" element={<MonthlyAchievement />} />
-        <Route path="/employee/monthly-report" element={<MonthlyReport />} />
+        {/* Employee */}
+        <Route
+          path="/employee/dashboard"
+          element={
+            <ProtectedRoute>
+              <EmployeeDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* RA routes */}
-        <Route path="/ra/dashboard" element={<RADashboard />} />
+        <Route
+          path="/employee/monthly-plan"
+          element={
+            <ProtectedRoute>
+              <MonthlyPlan />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* HRD routes */}
-        <Route path="/hrd/dashboard" element={<HRDDashboard />} />
+        <Route
+          path="/employee/monthly-achievement"
+          element={
+            <ProtectedRoute>
+              <MonthlyAchievement />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* RA */}
+        <Route
+          path="/ra/dashboard"
+          element={
+            <RoleProtectedRoute allowedRoles={["RA"]}>
+              <RADashboard />
+            </RoleProtectedRoute>
+          }
+        />
+
+        {/* HRD */}
+        <Route
+          path="/hrd/dashboard"
+          element={
+            <RoleProtectedRoute allowedRoles={["HRD"]}>
+              <HRDDashboard />
+            </RoleProtectedRoute>
+          }
+        />
+
+        {/* MD */}
+        <Route
+          path="/md/dashboard"
+          element={
+            <RoleProtectedRoute allowedRoles={["MD"]}>
+              <MDDashboard />
+            </RoleProtectedRoute>
+          }
+        />
+
 
       </Routes>
     </BrowserRouter>
