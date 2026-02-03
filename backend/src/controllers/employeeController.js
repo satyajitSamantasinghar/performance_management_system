@@ -1,5 +1,8 @@
 const MonthlyPlan = require("../models/MonthlyPlan");
 const AuditLog = require("../models/AuditLog");
+const YearlyPlan = require("../models/YearlyPlan");
+const MonthlyAchievement = require("../models/MonthlyAchievement");
+
 
 exports.submitMonthlyPlan = async (req, res) => {
   try {
@@ -30,7 +33,7 @@ exports.submitMonthlyPlan = async (req, res) => {
 };
 
 
-const MonthlyAchievement = require("../models/MonthlyAchievement");
+
 
 exports.submitMonthlyAchievement = async (req, res) => {
   try {
@@ -56,7 +59,7 @@ exports.submitMonthlyAchievement = async (req, res) => {
   }
 };
 
-const YearlyPlan = require("../models/YearlyPlan");
+
 
 exports.submitYearlyPlan = async (req, res) => {
   try {
@@ -81,5 +84,65 @@ exports.submitYearlyPlan = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getMonthlyPlans = async (req, res) => {
+  try {
+    let filter = {};
+
+    // EMPLOYEE → only own data
+    if (req.user.role === "EMPLOYEE") {
+      filter.employeeId = req.user.userId;
+    }
+
+    // Optional query filters (month, employeeId)
+    if (req.query.month) {
+      filter.month = req.query.month;
+    }
+
+    if (req.query.employeeId && req.user.role !== "EMPLOYEE") {
+      filter.employeeId = req.query.employeeId;
+    }
+
+    const plans = await MonthlyPlan.find(filter)
+      .populate("employeeId", "name employeeCode department")
+      .sort({ submittedAt: -1 });
+
+    res.json(plans);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch monthly plans" });
+  }
+};
+
+exports.getMonthlyAchievements = async (req, res) => {
+  try {
+    let filter = {};
+
+    // EMPLOYEE → only own achievements
+    if (req.user.role === "EMPLOYEE") {
+      filter.employeeId = req.user.userId;
+    }
+
+    // Optional query filters
+    if (req.query.monthlyPlanId) {
+      filter.monthlyPlanId = req.query.monthlyPlanId;
+    }
+
+    if (req.query.employeeId && req.user.role !== "EMPLOYEE") {
+      filter.employeeId = req.query.employeeId;
+    }
+
+    const achievements = await MonthlyAchievement.find(filter)
+      .populate("employeeId", "name employeeCode department")
+      .populate("monthlyPlanId", "month planDetails")
+      .sort({ submittedAt: -1 });
+
+    res.json(achievements);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch monthly achievements"
+    });
+  }
+};
+
 
 

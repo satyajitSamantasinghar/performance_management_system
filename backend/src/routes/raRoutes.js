@@ -19,5 +19,19 @@ router.post(
   authorizeRoles("RA"),
   raController.generateQuarterlyEvaluation
 );
+router.get(
+  "/monthly-evaluations",
+  verifyToken,
+  authorizeRoles("EMPLOYEE", "RA", "HRD", "MD"),
+  raController.getMonthlyEvaluations
+);
+router.get(
+  "/quarterly-evaluations",
+  verifyToken,
+  authorizeRoles("EMPLOYEE", "RA", "HRD", "MD"),
+  raController.getQuarterlyEvaluations
+);
+
+
 
 module.exports = router;

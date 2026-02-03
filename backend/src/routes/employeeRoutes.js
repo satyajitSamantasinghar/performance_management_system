@@ -33,4 +33,19 @@ router.post(
   employeeController.submitYearlyPlan
 );
 
+router.get(
+  "/monthly-plans",
+  verifyToken,
+  authorizeRoles("EMPLOYEE", "RA", "HRD", "MD"),
+  employeeController.getMonthlyPlans
+);
+router.get(
+  "/monthly-achievements",
+  verifyToken,
+  authorizeRoles("EMPLOYEE", "RA", "HRD", "MD"),
+  employeeController.getMonthlyAchievements
+);
+
+
+
 module.exports = router;
