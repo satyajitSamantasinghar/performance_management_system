@@ -8,6 +8,17 @@ exports.submitMonthlyPlan = async (req, res) => {
   try {
     const { month, planDetails } = req.body;
 
+    const existingPlan = await MonthlyPlan.findOne({
+      employeeId: req.user.userId,
+      month
+    });
+
+    if (existingPlan) {
+      return res.status(409).json({
+        message: "Monthly plan already submitted for this month"
+      });
+    }
+
     const plan = await MonthlyPlan.create({
       employeeId: req.user.userId,
       month,
@@ -23,9 +34,9 @@ exports.submitMonthlyPlan = async (req, res) => {
     });
 
     res.status(201).json({
-  message: "Monthly plan submitted",
-  monthlyPlanId: plan._id
-});
+      message: "Monthly plan submitted",
+      monthlyPlanId: plan._id
+    });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -38,6 +49,29 @@ exports.submitMonthlyPlan = async (req, res) => {
 exports.submitMonthlyAchievement = async (req, res) => {
   try {
     const { monthlyPlanId, achievementDetails } = req.body;
+
+    const plan = await MonthlyPlan.findOne({
+      _id: monthlyPlanId,
+      employeeId: req.user.userId
+    });
+
+    if (!plan) {
+      return res.status(404).json({
+        message: "Monthly plan not found for this employee"
+      });
+    }
+
+    const existingAchievement = await MonthlyAchievement.findOne({
+      employeeId: req.user.userId,
+      monthlyPlanId: plan._id
+    });
+
+
+    if (existingAchievement) {
+      return res.status(409).json({
+        message: "Monthly achievement already submitted for this month"
+      });
+    }
 
     const achievement = await MonthlyAchievement.create({
       employeeId: req.user.userId,
@@ -64,6 +98,17 @@ exports.submitMonthlyAchievement = async (req, res) => {
 exports.submitYearlyPlan = async (req, res) => {
   try {
     const { financialYear, planDetails } = req.body;
+
+    const existingPlan = await YearlyPlan.findOne({
+      employeeId: req.user.userId,
+      financialYear
+    });
+
+    if (existingPlan) {
+      return res.status(409).json({
+        message: "Yearly plan already submitted for this financial year"
+      });
+    }
 
     const plan = await YearlyPlan.create({
       employeeId: req.user.userId,
