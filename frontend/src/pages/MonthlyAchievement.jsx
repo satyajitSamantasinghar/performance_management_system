@@ -1,145 +1,140 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import { useAuth } from "../context/AuthContext";
+import React, { useEffect, useState } from "react";
 import api from "../api/axios";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
+import { useAuth } from "../context/AuthContext";
 
 const MonthlyAchievement = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [achievements, setAchievements] = useState([]);
-  const [monthlyPlanId, setMonthlyPlanId] = useState(null);
+  const [monthlyPlan, setMonthlyPlan] = useState(null);
+  const [achievementDetails, setAchievementDetails] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // ✅ current month in YYYY-MM format
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
+  // 🔹 Fetch CURRENT MONTH plan only
   useEffect(() => {
-    const fetchPlan = async () => {
+    const fetchMonthlyPlan = async () => {
       try {
-        const res = await api.get("/employee/monthly-plan", {
-          employeeId: user?.id, 
-        });
+        const res = await api.get(
+          `/employee/monthly-plans?month=${currentMonth}`
+        );
 
-        const plan = res.data;
-
-        if (plan && plan.tasks?.length > 0) {
-          setMonthlyPlanId(plan._id);
-
-          setAchievements(
-            plan.tasks.map((task) => ({
-              taskId: task._id,
-              taskTitle: task.title, 
-              status: "",
-            }))
-          );
+        if (res.data && res.data.length > 0) {
+          setMonthlyPlan(res.data[0]); // only one plan per month
         } else {
-          console.warn("No tasks found in the monthly plan.");
+          setMonthlyPlan(null);
         }
-      } catch (err) {
-        console.error("Failed to fetch monthly plan:", err);
+      } catch (error) {
+        console.error("Error fetching monthly plan:", error);
+        setMonthlyPlan(null);
       } finally {
         setLoading(false);
       }
     };
 
-    if (user) fetchPlan();
-  }, [user]);
+    fetchMonthlyPlan();
+  }, []);
 
-  const handleStatusChange = (index, value) => {
-    const updated = [...achievements];
-    updated[index].status = value;
-    setAchievements(updated);
-  };
+  // 🔹 Submit achievement
+  const handleSubmit = async () => {
+    if (!monthlyPlan) {
+      alert("No monthly plan found for this month");
+      return;
+    }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!monthlyPlanId) {
-      alert("Monthly Plan ID not found.");
+    if (!achievementDetails.trim()) {
+      alert("Please write your achievement details");
       return;
     }
 
     try {
       await api.post("/employee/monthly-achievement", {
-        planId: monthlyPlanId, 
-        achievements: achievements.map((a) => ({
-          taskId: a.taskId,
-          status: a.status,
-        })),
+        monthlyPlanId: monthlyPlan._id,
+        achievementDetails,
       });
 
-      navigate("/employee/dashboard");
-    } catch (err) {
-      console.error("Error submitting achievements:", err);
-      alert("Failed to submit achievements.");
+      alert("Monthly achievement submitted successfully");
+      setAchievementDetails("");
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to submit achievement");
+      console.error("Submission failed:", error);
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-600">Loading monthly plan...</p>
+        <p>Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1">
         <Navbar />
 
-        <main className="p-6 bg-orange-50 flex-1">
-          <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6">
-            <h1 className="text-2xl font-bold text-center text-orange-600 mb-6">
+        <div className="p-8 bg-[#fff6ec] min-h-screen">
+          <div className="bg-white rounded-xl p-6 max-w-4xl mx-auto shadow">
+            <h2 className="text-center text-2xl font-bold text-orange-600 mb-6">
               Monthly Achievement
-            </h1>
+            </h2>
 
-            {/* Employee Info */}
-            <div className="flex justify-between bg-orange-100 p-4 rounded-lg mb-6">
-              <div>
-                <p className="font-semibold">{user?.name}</p>
-                <p className="text-sm text-gray-700">{user?.role}</p>
-              </div>
+            {/* 🔹 Logged-in User Info */}
+            <div className="bg-[#ffedd5] p-4 rounded mb-6">
+              <p className="font-semibold text-lg">{user?.name}</p>
+              <p className="text-sm text-gray-700">Role: {user?.role}</p>
+              <p className="text-sm text-gray-700">Email: {user?.email}</p>
             </div>
 
-            {/* Achievement Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {achievements.map((item, index) => (
-                <div
-                  key={item.taskId}
-                  className="flex justify-between gap-3 border border-orange-200 rounded-lg p-3"
-                >
-                  <p>{item.taskTitle}</p>
+            {!monthlyPlan ? (
+              <p className="text-center text-gray-500">
+                No monthly plan found for {currentMonth}
+              </p>
+            ) : (
+              <>
+                {/* 🔹 Monthly Plan Display */}
+                <div className="border rounded p-4 mb-4">
+                  <p className="font-semibold mb-2">
+                    Month: {monthlyPlan.month}
+                  </p>
 
-                  <select
-                    className="border border-orange-300 rounded px-3 py-1"
-                    value={item.status}
-                    onChange={(e) =>
-                      handleStatusChange(index, e.target.value)
-                    }
-                    required
-                  >
-                    <option value="">Select status</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Ongoing">Ongoing</option>
-                    <option value="Pending">Pending</option>
-                  </select>
+                  {/* ✅ Proper plan list (down by down) */}
+                  <ul className="list-decimal ml-6 space-y-2">
+                    {monthlyPlan.planDetails
+                      .split(/\d+\.\s*/)
+                      .filter(item => item.trim() !== "")
+                      .map((item, index) => (
+                        <li key={index}>{item.trim()}</li>
+                      ))}
+                  </ul>
                 </div>
-              ))}
 
-              <div className="flex justify-center pt-6">
-                <button
-                  type="submit"
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-lg font-semibold"
-                >
-                  Submit Achievement
-                </button>
-              </div>
-            </form>
+                {/* 🔹 Achievement Input */}
+                <textarea
+                  className="w-full border rounded p-3 mb-4"
+                  placeholder="Write your achievement details..."
+                  value={achievementDetails}
+                  onChange={(e) => setAchievementDetails(e.target.value)}
+                />
+
+                <div className="text-center">
+                  <button
+                    onClick={handleSubmit}
+                    className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
+                  >
+                    Submit Achievement
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
