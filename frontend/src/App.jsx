@@ -10,6 +10,9 @@ import YearlyPlan from "./pages/YearlyPlan";
 
 import HRDDashboard from "./pages/HRDDashboard";
 import MDDashboard from "./pages/MDDashboard";
+import RADashboard from "./pages/ra/RADashboard";
+import MonthlyEvaluationList from "./pages/ra/MonthlyEvaluationList";
+import MonthlyEvaluationView from "./pages/ra/MonthlyEvaluationView";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
