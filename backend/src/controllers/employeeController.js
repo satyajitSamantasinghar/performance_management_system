@@ -2,8 +2,11 @@ const MonthlyPlan = require("../models/MonthlyPlan");
 const AuditLog = require("../models/AuditLog");
 const YearlyPlan = require("../models/YearlyPlan");
 const MonthlyAchievement = require("../models/MonthlyAchievement");
+// ✅ Added these two imports to link the Evaluation to the RA
+const MonthlyEvaluation = require("../models/MonthlyEvaluation");
+const User = require("../models/User");
 
-
+// 1. Submit Monthly Plan (UPDATED FIX)
 exports.submitMonthlyPlan = async (req, res) => {
   try {
     const { month, planDetails } = req.body;
@@ -19,12 +22,37 @@ exports.submitMonthlyPlan = async (req, res) => {
       });
     }
 
+    // 1. Create the Plan
     const plan = await MonthlyPlan.create({
       employeeId: req.user.userId,
       month,
       planDetails
     });
 
+    // 2. ✅ AUTOMATIC FIX: Create the Evaluation Record for the RA
+    // Fetch the user to get their Reporting Authority ID
+    const user = await User.findById(req.user.userId);
+
+    if (user && user.reportingAuthorityId) {
+      // Check if evaluation already exists (just in case)
+      const existingEval = await MonthlyEvaluation.findOne({
+        employeeId: req.user.userId,
+        month: month
+      });
+
+      if (!existingEval) {
+        await MonthlyEvaluation.create({
+          employeeId: req.user.userId,
+          monthlyPlanId: plan._id,
+          raId: user.reportingAuthorityId, // Links to RA Dashboard
+          month: month,
+          score: 0, // Default 0 (treated as "Pending" by your logic)
+          remarks: "" 
+        });
+      }
+    }
+
+    // 3. Audit Log
     await AuditLog.create({
       userId: req.user.userId,
       action: "SUBMIT",
@@ -39,13 +67,12 @@ exports.submitMonthlyPlan = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Submit Plan Error:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-
-
-
+// 2. Submit Monthly Achievement
 exports.submitMonthlyAchievement = async (req, res) => {
   try {
     const { monthlyPlanId, achievementDetails } = req.body;
@@ -94,7 +121,7 @@ exports.submitMonthlyAchievement = async (req, res) => {
 };
 
 
-
+// 3. Submit Yearly Plan
 exports.submitYearlyPlan = async (req, res) => {
   try {
     const { financialYear, planDetails } = req.body;
@@ -130,6 +157,7 @@ exports.submitYearlyPlan = async (req, res) => {
   }
 };
 
+// 4. Get Monthly Plans
 exports.getMonthlyPlans = async (req, res) => {
   try {
     let filter = {};
@@ -158,6 +186,7 @@ exports.getMonthlyPlans = async (req, res) => {
   }
 };
 
+// 5. Get Monthly Achievements
 exports.getMonthlyAchievements = async (req, res) => {
   try {
     let filter = {};
@@ -188,6 +217,3 @@ exports.getMonthlyAchievements = async (req, res) => {
     });
   }
 };
-
-
-

@@ -15,3 +15,8 @@ export const getMonthlyEvaluationById = (id) => {
   return api.get(`/ra/monthly-evaluations/${id}`);
 };
 
+export const submitMonthlyEvaluation = (payload) => {
+  return api.post("/ra/monthly-evaluation", payload);
+};
+
+
