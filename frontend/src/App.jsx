@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import MonthlyPlan from "./pages/MonthlyPlan";
 import MonthlyAchievement from "./pages/MonthlyAchievement";
+import YearlyPlan from "./pages/YearlyPlan";
 
 import HRDDashboard from "./pages/HRDDashboard";
 import MDDashboard from "./pages/MDDashboard";
