@@ -6,10 +6,6 @@ import Register from "./pages/Register";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import MonthlyPlan from "./pages/MonthlyPlan";
 import MonthlyAchievement from "./pages/MonthlyAchievement";
-import MonthlyEvaluationList from "./pages/ra/MonthlyEvaluationList";
-
-import RADashboard from "./pages/ra/RADashboard";
-import MonthlyEvaluationView from "./pages/ra/MonthlyEvaluationView";
 
 import HRDDashboard from "./pages/HRDDashboard";
 import MDDashboard from "./pages/MDDashboard";
@@ -52,6 +48,15 @@ function App() {
           element={
             <ProtectedRoute>
               <MonthlyAchievement />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/employee/yearly-plan"
+          element={
+            <ProtectedRoute>
+              <YearlyPlan />
             </ProtectedRoute>
           }
         />

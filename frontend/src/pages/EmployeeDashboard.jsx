@@ -60,6 +60,63 @@ const EmployeeDashboard = () => {
                 />
               </div>
             </div>
+
+            {/* Status Section */}
+            <div className="mt-12 max-w-6xl mx-auto">
+              <div className="bg-white rounded-xl shadow-sm p-6 relative overflow-hidden">
+
+                {/* Thin Accent Bar */}
+                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-orange-400 to-orange-600"></div>
+
+                {/* Header */}
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Your Current Status
+                  </h2>
+                  <p className="text-gray-500 text-xs mt-1">
+                    Monthly submission overview
+                  </p>
+                </div>
+
+                {/* Status Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* Monthly Plan */}
+                  <div className="rounded-lg border p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-gray-700">
+                        Monthly Plan
+                      </h3>
+                      <span className="text-[10px] font-medium text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
+                        Required
+                      </span>
+                    </div>
+
+                    <span className="inline-block px-4 py-1 rounded-full text-xs font-semibold bg-orange-500 text-white">
+                      Submitted
+                    </span>
+                  </div>
+
+                  {/* Monthly Achievement */}
+                  <div className="rounded-lg border p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-gray-700">
+                        Monthly Achievement
+                      </h3>
+                      <span className="text-[10px] font-medium text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
+                        In Progress
+                      </span>
+                    </div>
+
+                    <span className="inline-block px-4 py-1 rounded-full text-xs font-semibold border border-orange-500 text-orange-600 bg-orange-50">
+                      Pending
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
           </div>
         </main>
       </div>
