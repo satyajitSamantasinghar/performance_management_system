@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/okcl-logo.png";
 import { getMonthlyPhase } from "../utils/getMonthlyPhase";
+import { getYearlyPhase } from "../utils/getYearlyPhase";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -15,21 +16,38 @@ const Sidebar = () => {
   const inactive =
     "text-gray-600 hover:bg-gray-50";
 
+  // 📅 Monthly logic
   const handleMonthlyReportClick = () => {
     const phase = getMonthlyPhase();
-    navigate("/employee/monthly-plan")
+
+    if (phase === "PLAN") {
+      navigate("/employee/monthly-plan");
+      return;
+    }
+
+    if (phase === "ACHIEVEMENT") {
+      navigate("/employee/monthly-achievement");
+      return;
+    }
+
+    alert("Monthly report is locked right now.");
+  };
+
+  // 📆 Yearly logic
+  const handleYearlyAppraisalClick = () => {
+    const phase = getYearlyPhase();
 
     // if (phase === "PLAN") {
-    //   navigate("/employee/monthly-plan");
+      navigate("/employee/yearly-plan");
     //   return;
     // }
 
     // if (phase === "ACHIEVEMENT") {
-    //   navigate("/employee/monthly-achievement");
+    //   navigate("/employee/yearly-achievement");
     //   return;
     // }
 
-    // alert("Monthly report is locked right now.");
+    // alert("Yearly appraisal is not open right now.");
   };
 
   return (
@@ -41,6 +59,7 @@ const Sidebar = () => {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-5 space-y-1">
+        {/* Dashboard */}
         <NavLink
           to="/employee/dashboard"
           className={({ isActive }) =>
@@ -50,7 +69,7 @@ const Sidebar = () => {
           Dashboard
         </NavLink>
 
-        {/* Monthly Report (CUSTOM LOGIC) */}
+        {/* Monthly Report */}
         <div
           onClick={handleMonthlyReportClick}
           className={`${base} ${inactive}`}
@@ -58,6 +77,7 @@ const Sidebar = () => {
           Monthly Report
         </div>
 
+        {/* Quarterly Report */}
         <NavLink
           to="/employee/quarterly"
           className={({ isActive }) =>
@@ -67,14 +87,13 @@ const Sidebar = () => {
           Quarterly Report
         </NavLink>
 
-        <NavLink
-          to="/employee/yearly"
-          className={({ isActive }) =>
-            `${base} ${isActive ? active : inactive}`
-          }
+        {/* Yearly Appraisal */}
+        <div
+          onClick={handleYearlyAppraisalClick}
+          className={`${base} ${inactive}`}
         >
           Yearly Appraisal
-        </NavLink>
+        </div>
       </nav>
     </div>
   );
