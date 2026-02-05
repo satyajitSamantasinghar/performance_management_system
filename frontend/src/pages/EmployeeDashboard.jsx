@@ -43,7 +43,7 @@ const EmployeeDashboard = () => {
                 <DashboardCard
                   title="Monthly Report"
                   subtitle="Submit your monthly plan & achievements"
-                  onClick={() => navigate("/monthly-report")}
+                  onClick={() => navigate("/employee/monthly-achievement")}
                   accent="orange"
                 />
 
