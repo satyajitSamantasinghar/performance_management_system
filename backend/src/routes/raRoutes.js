@@ -31,6 +31,12 @@ router.get(
   authorizeRoles("EMPLOYEE", "RA", "HRD", "MD"),
   raController.getQuarterlyEvaluations
 );
+router.get(
+  "/monthly-evaluations/:id",
+  verifyToken,
+  authorizeRoles("RA"),
+  raController.getMonthlyEvaluationById
+);
 
 
 

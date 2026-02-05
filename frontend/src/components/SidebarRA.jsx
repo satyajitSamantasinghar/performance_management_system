@@ -34,31 +34,32 @@ const SidebarRA = () => {
         </NavLink>
 
         <NavLink
-          to="/ra/monthly-review"
-          className={({ isActive }) =>
-            `${base} ${isActive ? active : inactive}`
-          }
-        >
-          Monthly Evaluation
-        </NavLink>
+  to="/ra/monthly-evaluations"
+  className={({ isActive }) =>
+    `${base} ${isActive ? active : inactive}`
+  }
+>
+  Monthly Evaluation
+</NavLink>
 
-        <NavLink
-          to="/ra/quarterly-review"
-          className={({ isActive }) =>
-            `${base} ${isActive ? active : inactive}`
-          }
-        >
-          Quarterly Evaluation
-        </NavLink>
+<NavLink
+  to="/ra/quarterly-evaluations"
+  className={({ isActive }) =>
+    `${base} ${isActive ? active : inactive}`
+  }
+>
+  Quarterly Evaluation
+</NavLink>
 
-        <NavLink
-          to="/ra/yearly-review"
-          className={({ isActive }) =>
-            `${base} ${isActive ? active : inactive}`
-          }
-        >
-          Yearly Appraisal
-        </NavLink>
+<NavLink
+  to="/ra/yearly-appraisal"
+  className={({ isActive }) =>
+    `${base} ${isActive ? active : inactive}`
+  }
+>
+  Yearly Appraisal
+</NavLink>
+
       </nav>
     </div>
   );

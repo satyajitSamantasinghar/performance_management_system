@@ -1,6 +1,8 @@
 const MonthlyEvaluation = require("../models/MonthlyEvaluation");
 const QuarterlyEvaluation = require("../models/QuarterlyEvaluation");
 const AuditLog = require("../models/AuditLog");
+const MonthlyAchievement = require("../models/MonthlyAchievement");
+
 
 
 exports.submitMonthlyEvaluation = async (req, res) => {
@@ -81,23 +83,17 @@ exports.getMonthlyEvaluations = async (req, res) => {
     let filter = {};
     let projection = {};
 
-    // 🔐 EMPLOYEE: only existence/status, no marks or remarks
+    // 🔐 EMPLOYEE: hide marks & remarks
     if (req.user.role === "EMPLOYEE") {
       filter.employeeId = req.user.userId;
-
-      projection = {
-        score: 0,
-        remarks: 0,
-        raId: 0
-      };
+      projection = { score: 0, remarks: 0, raId: 0 };
     }
 
-    // 🧑‍⚖️ RA: only evaluations done by them
+    // 🧑‍⚖️ RA: only own evaluations
     if (req.user.role === "RA") {
       filter.raId = req.user.userId;
     }
 
-    // 👔 HRD / MD: can filter by employee
     if (req.query.employeeId && req.user.role !== "EMPLOYEE") {
       filter.employeeId = req.query.employeeId;
     }
@@ -108,20 +104,34 @@ exports.getMonthlyEvaluations = async (req, res) => {
 
     const evaluations = await MonthlyEvaluation.find(filter, projection)
       .populate("employeeId", "name employeeCode department")
-      .populate(
-        req.user.role === "EMPLOYEE" ? "" : "raId",
-        "name employeeCode"
-      )
       .populate("monthlyPlanId", "month")
-      .sort({ evaluatedAt: -1 });
+      .populate("monthlyAchievementId")
+      .sort({ createdAt: -1 });
 
-    res.json(evaluations);
+    const enrichedEvaluations = evaluations.map((ev) => ({
+      _id: ev._id,
+      employeeId: ev.employeeId,
+      month: ev.month,
+
+      // ✅ Plan status
+      planSubmitted: !!ev.monthlyPlanId,
+
+      // ✅ Achievement status
+      achievementSubmitted: !!ev.monthlyAchievementId,
+
+      // ✅ Evaluation
+      score: ev.score || null,
+      status: ev.score ? "Evaluated" : "Pending"
+    }));
+
+    res.json(enrichedEvaluations);
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch monthly evaluations"
     });
   }
 };
+
 
 exports.getQuarterlyEvaluations = async (req, res) => {
   try {
@@ -167,3 +177,32 @@ exports.getQuarterlyEvaluations = async (req, res) => {
     });
   }
 };
+
+exports.getMonthlyEvaluationById = async (req, res) => {
+  try {
+    const evaluation = await MonthlyEvaluation.findById(req.params.id)
+      .populate("employeeId", "name employeeCode department")
+      .populate("monthlyPlanId")
+      .populate("raId", "name employeeCode");
+
+    if (!evaluation) {
+      return res.status(404).json({ message: "Evaluation not found" });
+    }
+
+    // Achievement (separate collection)
+    const achievement = await MonthlyAchievement.findOne({
+      employeeId: evaluation.employeeId._id,
+      month: evaluation.month
+    });
+
+    res.json({
+      evaluation,
+      planSubmitted: !!evaluation.monthlyPlanId,
+      achievementSubmitted: !!achievement,
+      achievement
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch evaluation" });
+  }
+};
+

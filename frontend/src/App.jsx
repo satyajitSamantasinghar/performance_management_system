@@ -6,8 +6,11 @@ import Register from "./pages/Register";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import MonthlyPlan from "./pages/MonthlyPlan";
 import MonthlyAchievement from "./pages/MonthlyAchievement";
+import MonthlyEvaluationList from "./pages/ra/MonthlyEvaluationList";
 
-import RADashboard from "./pages/RADashboard";
+import RADashboard from "./pages/ra/RADashboard";
+import MonthlyEvaluationView from "./pages/ra/MonthlyEvaluationView";
+
 import HRDDashboard from "./pages/HRDDashboard";
 import MDDashboard from "./pages/MDDashboard";
 
@@ -62,6 +65,22 @@ function App() {
             </RoleProtectedRoute>
           }
         />
+        <Route
+          path="/ra/monthly-evaluations"
+          element={
+            <RoleProtectedRoute allowedRoles={["RA"]}>
+              <MonthlyEvaluationList />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/ra/monthly-evaluations/view/:id"
+          element={
+            <RoleProtectedRoute allowedRoles={["RA"]}>
+              <MonthlyEvaluationView />
+            </RoleProtectedRoute>
+          }
+        />
 
         {/* HRD */}
         <Route
@@ -82,8 +101,6 @@ function App() {
             </RoleProtectedRoute>
           }
         />
-
-
       </Routes>
     </BrowserRouter>
   );

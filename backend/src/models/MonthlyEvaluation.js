@@ -38,7 +38,12 @@ const monthlyEvaluationSchema = new mongoose.Schema({
   evaluatedAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  monthlyAchievementId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "MonthlyAchievement"
+}
+
 });
 
 module.exports = mongoose.model("MonthlyEvaluation", monthlyEvaluationSchema);

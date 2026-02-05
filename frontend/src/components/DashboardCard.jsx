@@ -1,32 +1,27 @@
 import React from "react";
 
-const accentStyles = {
-  orange:
-    "border-orange-500 hover:shadow-[0_25px_45px_-12px_rgba(255,106,0,0.45)]",
-  gray:
-    "border-gray-300 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.18)]",
-};
-
-const DashboardCard = ({ title, subtitle, accent }) => {
+const DashboardCard = ({ title, subtitle, accent, onClick }) => {
   return (
     <div
-      className={`bg-white border-l-4 ${
-        accentStyles[accent]
-      } rounded-2xl p-7 shadow-md transition-all duration-300
-      hover:-translate-y-2 cursor-pointer h-44 flex flex-col justify-between`}
+      onClick={onClick}
+      className={`bg-white rounded-xl shadow-md p-6 border-l-4 border-${accent}-600 
+        hover:shadow-lg transition cursor-pointer`}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") onClick();
+      }}
     >
-      <div>
-        <h2 className="text-xl font-semibold text-gray-800">
-          {title}
-        </h2>
-        <p className="text-sm text-gray-500 mt-2">
-          {subtitle}
-        </p>
-      </div>
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+        {title}
+      </h3>
+      <p className="text-gray-600 text-sm">
+        {subtitle}
+      </p>
 
-      <span className="text-sm font-medium text-orange-500">
+      <p className="mt-4 text-orange-500 font-medium">
         View Details →
-      </span>
+      </p>
     </div>
   );
 };
