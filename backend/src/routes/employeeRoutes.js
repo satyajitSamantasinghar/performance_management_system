@@ -39,11 +39,26 @@ router.get(
   authorizeRoles("EMPLOYEE", "RA", "HRD", "MD"),
   employeeController.getMonthlyPlans
 );
+
 router.get(
   "/monthly-achievements",
   verifyToken,
   authorizeRoles("EMPLOYEE", "RA", "HRD", "MD"),
   employeeController.getMonthlyAchievements
+);
+
+router.post(
+  "/yearly-achievement",
+  verifyToken,
+  authorizeRoles("EMPLOYEE"),
+  employeeController.submitYearlyAchievement
+);
+
+router.get(
+  "/yearly-plans",
+  verifyToken,
+  authorizeRoles("EMPLOYEE"),
+  employeeController.getYearlyPlans
 );
 
 
