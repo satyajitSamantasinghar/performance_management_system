@@ -18,6 +18,8 @@ import MonthlyEvaluationView from "./pages/ra/MonthlyEvaluationView";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 import YearlyAchievement from "./pages/YearlyAchievement";
+import MonthlyEvaluationEvaluate from "./pages/ra/MonthlyEvaluationEvaluate";
+
 
 function App() {
   return (
@@ -101,6 +103,16 @@ function App() {
             </RoleProtectedRoute>
           }
         />
+
+        
+<Route
+  path="/ra/monthly-review/:id"
+  element={
+    <RoleProtectedRoute allowedRoles={["RA"]}>
+      <MonthlyEvaluationEvaluate />
+    </RoleProtectedRoute>
+  }
+/>
 
         {/* HRD */}
         <Route
