@@ -21,47 +21,47 @@ const Login = () => {
     setLoading(true);
 
     navigate("/employee/dashboard");
-    // try {
-    //   const res = await api.post("/auth/login", {
-    //     email,
-    //     password,
-    //   });
+    try {
+      const res = await api.post("/auth/login", {
+        email,
+        password,
+      });
 
-    //   const { accessToken, role, name } = res.data;
+      const { accessToken, role, name } = res.data;
 
-    //   if (!accessToken || !role) {
-    //     throw new Error("Invalid login response");
-    //   }
+      if (!accessToken || !role) {
+        throw new Error("Invalid login response");
+      }
 
-    //   login(accessToken, { name, role });
+      login(accessToken, { name, role });
 
-    //   switch (role) {
-    //     case "EMPLOYEE":
-    //       navigate("/employee/dashboard");
-    //       break;
-    //     case "RA":
-    //       navigate("/ra/dashboard");
-    //       break;
-    //     case "HRD":
-    //       navigate("/hrd/dashboard");
-    //       break;
-    //     case "MD":
-    //       navigate("/md/dashboard");
-    //       break;
-    //     default:
-    //       setError("Unauthorized role");
-    //       navigate("/login");
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   setError(
-    //     err.response?.data?.message ||
-    //       err.message ||
-    //       "Login failed"
-    //   );
-    // } finally {
-    //   setLoading(false);
-    // }
+      switch (role) {
+        case "EMPLOYEE":
+          navigate("/employee/dashboard");
+          break;
+        case "RA":
+          navigate("/ra/dashboard");
+          break;
+        case "HRD":
+          navigate("/hrd/dashboard");
+          break;
+        case "MD":
+          navigate("/md/dashboard");
+          break;
+        default:
+          setError("Unauthorized role");
+          navigate("/login");
+      }
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
