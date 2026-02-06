@@ -95,8 +95,11 @@ const EmployeeDashboard = () => {
 
                 <DashboardCard
                   title="Yearly Appraisal"
-                  subtitle="Coming soon"
-                  disabled
+                  subtitle="Plan and achievements"
+                  onClick={()=>
+                    navigate("/employee/yearly-achievement")
+                  }
+                  accent="orange"
                 />
               </div>
             </div>

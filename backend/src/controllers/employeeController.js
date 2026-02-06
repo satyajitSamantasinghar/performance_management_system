@@ -2,7 +2,7 @@ const MonthlyPlan = require("../models/MonthlyPlan");
 const AuditLog = require("../models/AuditLog");
 const YearlyPlan = require("../models/YearlyPlan");
 const MonthlyAchievement = require("../models/MonthlyAchievement");
-
+const YearlyAchievement=require("../models/YearlyAchievement");
 
 exports.submitMonthlyPlan = async (req, res) => {
   try {
@@ -186,6 +186,75 @@ exports.getMonthlyAchievements = async (req, res) => {
     res.status(500).json({
       message: "Failed to fetch monthly achievements"
     });
+  }
+};
+
+
+exports.getYearlyPlans = async (req, res) => {
+  try {
+    const plans = await YearlyPlan.find({
+      employeeId: req.user.userId
+    }).sort({ createdAt: -1 });
+
+    res.json(plans);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch yearly plans"
+    });
+  }
+};
+
+
+
+exports.submitYearlyAchievement = async (req, res) => {
+  try {
+    const { yearlyPlanId, tasksCompleted, additionalTasks } = req.body;
+
+    // 1️⃣ Check yearly plan exists & belongs to employee
+    const plan = await YearlyPlan.findOne({
+      _id: yearlyPlanId,
+      employeeId: req.user.userId
+    });
+
+    if (!plan) {
+      return res.status(404).json({
+        message: "Yearly plan not found"
+      });
+    }
+
+    // 2️⃣ Prevent duplicate yearly achievement
+    const existingAchievement = await YearlyAchievement.findOne({
+      employeeId: req.user.userId,
+      yearlyPlanId
+    });
+
+    if (existingAchievement) {
+      return res.status(409).json({
+        message: "Yearly achievement already submitted"
+      });
+    }
+
+    // 3️⃣ Create achievement
+    const achievement = await YearlyAchievement.create({
+      employeeId: req.user.userId,
+      yearlyPlanId,
+      tasksCompleted,
+      additionalTasks
+    });
+
+    await AuditLog.create({
+      userId: req.user.userId,
+      action: "SUBMIT",
+      entityType: "YEARLY_ACHIEVEMENT",
+      entityId: achievement._id,
+      ipAddress: req.ip
+    });
+
+    res.status(201).json({
+      message: "Yearly achievement submitted successfully"
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
