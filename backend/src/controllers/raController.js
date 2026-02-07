@@ -3,19 +3,29 @@ const QuarterlyEvaluation = require("../models/QuarterlyEvaluation");
 const AuditLog = require("../models/AuditLog");
 const MonthlyAchievement = require("../models/MonthlyAchievement");
 
-// 1. Submit Monthly Evaluation
 exports.submitMonthlyEvaluation = async (req, res) => {
   try {
-    const { employeeId, monthlyPlanId, month, score, remarks } = req.body;
+    const { evaluationId, score, remarks } = req.body;
 
-    const evaluation = await MonthlyEvaluation.create({
-      employeeId,
-      monthlyPlanId,
-      raId: req.user.userId,
-      month,
-      score,
-      remarks
-    });
+    const evaluation = await MonthlyEvaluation.findById(evaluationId);
+
+    if (!evaluation) {
+      return res.status(404).json({
+        message: "Evaluation not found"
+      });
+    }
+
+    // ❌ Prevent re-evaluation
+    if (evaluation.score) {
+      return res.status(400).json({
+        message: "Evaluation already submitted"
+      });
+    }
+
+    // ✅ Update existing evaluation
+    evaluation.score = score;
+    evaluation.remarks = remarks;
+    await evaluation.save();
 
     await AuditLog.create({
       userId: req.user.userId,
@@ -25,9 +35,13 @@ exports.submitMonthlyEvaluation = async (req, res) => {
       ipAddress: req.ip
     });
 
-    res.status(201).json({ message: "Monthly evaluation submitted" });
+    res.json({ message: "Monthly evaluation submitted successfully" });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      message: "Failed to submit evaluation",
+      error: error.message
+    });
   }
 };
 
@@ -116,9 +130,10 @@ exports.getMonthlyEvaluations = async (req, res) => {
       
       if (!isAchievementSubmitted && ev.employeeId) {
          const exists = await MonthlyAchievement.exists({
-             employeeId: ev.employeeId._id,
-             month: ev.month
-         });
+  employeeId: ev.employeeId._id,
+  monthlyPlanId: ev.monthlyPlanId
+});
+
          isAchievementSubmitted = !!exists;
       }
 
@@ -203,9 +218,10 @@ exports.getMonthlyEvaluationById = async (req, res) => {
 
     // Fetch monthly achievement (separate collection)
     const achievement = await MonthlyAchievement.findOne({
-      employeeId: evaluation.employeeId._id,
-      month: evaluation.month
-    });
+  employeeId: evaluation.employeeId._id,
+  monthlyPlanId: evaluation.monthlyPlanId
+});
+
 
     res.json({
       evaluation,

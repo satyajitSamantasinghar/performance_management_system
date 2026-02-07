@@ -21,7 +21,7 @@ const MonthlyEvaluationView = () => {
     return <p className="p-10 text-gray-500">Loading evaluation...</p>;
   }
 
-  const { evaluation, planSubmitted, achievementSubmitted, achievement } = data;
+  const { evaluation, plan, achievement, status } = data;
   console.log(achievement,"achievement");
   
   return (
@@ -30,71 +30,117 @@ const MonthlyEvaluationView = () => {
 
       <div className="flex-1 flex flex-col">
         <Navbar />
+<main className="px-4 md:px-8 py-8 max-w-6xl mx-auto">
+  {/* Header */}
+  <div className="mb-8">
+    <h1 className="text-2xl md:text-3xl font-bold text-green-700">
+      Monthly Evaluation
+    </h1>
+    <p className="text-gray-500 mt-1">
+      {evaluation.month}
+    </p>
+  </div>
 
-        <main className="px-10 py-10 max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-green-600">
-              Monthly Evaluation – {evaluation.month}
-            </h1>
-            <p className="text-gray-600">
-              {evaluation.employeeId.name} ({evaluation.employeeId.employeeCode})
-            </p>
+  {/* Grid Layout */}
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    {/* LEFT COLUMN */}
+    <div className="lg:col-span-2 space-y-6">
+
+      {/* Employee Details */}
+      <div className="bg-white rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold mb-4">Employee Details</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          <p><span className="font-medium">Name:</span> {evaluation.employeeId.name}</p>
+          <p><span className="font-medium">Department:</span> {evaluation.employeeId.department}</p>
+          <p><span className="font-medium">Employee Code:</span> {evaluation.employeeId.employeeCode}</p>
+          <p><span className="font-medium">Month:</span> {evaluation.month}</p>
+        </div>
+      </div>
+
+      {/* Monthly Plan */}
+      <div className="bg-white rounded-xl shadow-sm border p-6">
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-lg font-semibold">Monthly Plan</h2>
+          <span className={`text-xs px-3 py-1 rounded-full ${
+            status.planSubmitted
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-100 text-gray-500"
+          }`}>
+            {status.planSubmitted ? "Submitted" : "Not Submitted"}
+          </span>
+        </div>
+
+        {plan ? (
+          <p className="text-gray-700 text-sm leading-relaxed">
+            {plan.planDetails}
+          </p>
+        ) : (
+          <p className="text-gray-400 text-sm">No plan available</p>
+        )}
+      </div>
+
+      {/* Monthly Achievement */}
+      <div className="bg-white rounded-xl shadow-sm border p-6">
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-lg font-semibold">Monthly Achievement</h2>
+          <span className={`text-xs px-3 py-1 rounded-full ${
+            status.achievementSubmitted
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-100 text-gray-500"
+          }`}>
+            {status.achievementSubmitted ? "Submitted" : "Not Submitted"}
+          </span>
+        </div>
+
+        {achievement ? (
+          <p className="text-gray-700 text-sm leading-relaxed">
+            {achievement.achievementDetails}
+          </p>
+        ) : (
+          <p className="text-gray-400 text-sm">No achievement available</p>
+        )}
+      </div>
+
+    </div>
+
+    {/* RIGHT COLUMN */}
+    <div className="space-y-6">
+
+      {/* RA Evaluation */}
+      <div className="bg-white rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold mb-4">RA Evaluation</h2>
+
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-sm font-medium">Status:</span>
+          <span className={`text-xs px-3 py-1 rounded-full ${
+            evaluation.score
+              ? "bg-green-100 text-green-700"
+              : "bg-yellow-100 text-yellow-700"
+          }`}>
+            {evaluation.score ? "Evaluated" : "Pending"}
+          </span>
+        </div>
+
+        {evaluation.score && (
+          <div className="text-sm space-y-2">
+            <p><span className="font-medium">Score:</span> {evaluation.score}</p>
+            <p><span className="font-medium">Remarks:</span> {evaluation.remarks}</p>
           </div>
+        )}
+      </div>
 
-          {/* Employee Info */}
-          <section className="bg-white rounded-xl shadow p-6 mb-6">
-            <h2 className="text-lg font-semibold mb-4">Employee Details</h2>
-            <p><strong>Name:</strong> {evaluation.employeeId.name}</p>
-            <p><strong>Department:</strong> {evaluation.employeeId.department}</p>
-            <p><strong>Month:</strong> {evaluation.month}</p>
-          </section>
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="w-full text-center text-blue-600 text-sm hover:underline"
+      >
+        ← Back to Monthly Evaluations
+      </button>
+    </div>
+  </div>
+</main>
 
-          {/* Plan */}
-          <section className="bg-white rounded-xl shadow p-6 mb-6">
-            <h2 className="text-lg font-semibold mb-4">Monthly Plan</h2>
-            {planSubmitted ? (
-              <p className="text-green-600">Plan submitted</p>
-            ) : (
-              <p className="text-gray-400">Not submitted</p>
-            )}
-          </section>
-
-          {/* Achievement */}
-          <section className="bg-white rounded-xl shadow p-6 mb-6">
-            <h2 className="text-lg font-semibold mb-4">Monthly Achievement</h2>
-            {achievementSubmitted ? (
-              <p className="text-green-600">
-                Achievement submitted
-              </p>
-            ) : (
-              <p className="text-gray-400">Not submitted</p>
-            )}
-          </section>
-
-          {/* Evaluation */}
-          <section className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">RA Evaluation</h2>
-            <p><strong>Status:</strong> {evaluation.score ? "Evaluated" : "Pending"}</p>
-
-            {evaluation.score && (
-              <>
-                <p className="mt-2"><strong>Score:</strong> {evaluation.score}</p>
-                <p className="mt-2"><strong>Remarks:</strong> {evaluation.remarks}</p>
-              </>
-            )}
-          </section>
-
-          {/* Back */}
-          <div className="mt-8">
-            <button
-              onClick={() => navigate(-1)}
-              className="text-blue-600 hover:underline"
-            >
-              ← Back to list
-            </button>
-          </div>
-        </main>
       </div>
     </div>
   );
